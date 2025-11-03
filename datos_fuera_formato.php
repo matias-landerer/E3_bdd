@@ -43,7 +43,7 @@ function datos_fuera_formato ($nombre_archivo){
             $indices_columnas[] = $indice_actual;
         }
     }
-    print_r($indices_columnas);
+
     while (($fila = fgetcsv($archivo, 0, ';', '"', '\\')) !== false){
         $len_fila = count($fila);
         for ($i = 0; $i < $len_fila; $i++){
@@ -57,11 +57,11 @@ function datos_fuera_formato ($nombre_archivo){
                     $valor_actual = trim($valor_actual);
                     $len_valor = strlen($valor_actual);
                     if ($len_valor !== 8 or $valor_actual[0] == "0"){
-                        echo $valor_actual."\n"; //Para ERR
-                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'w');
+                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'a');
                         for ($j = 0; $j < $len_fila; $j++){
                             fwrite($XXXERR, $fila[$j].";");
                         }
+                        fwrite($XXXERR, "\n");
                         fclose($XXXERR);
                     }
                 }
@@ -71,18 +71,22 @@ function datos_fuera_formato ($nombre_archivo){
                     $valor_actual = trim($valor_actual);
                     $len_valor = strlen($valor_actual);
                     if ($len_valor > 12){
-                        $valor_actual[$len_valor - 4] = "-";
-                        $valor_actual[$len_valor - 3] = $valor_actual[$len_valor - 1];
-                        $valor_actual = substr($valor_actual, 0, $len_valor - 2);
-                        $len_valor = strlen($valor_actual);
+                        $valor_actual_mejorado = $valor_actual;
+                        $valor_actual_mejorado[$len_valor - 4] = "-";
+                        $valor_actual_mejorado[$len_valor - 3] = $valor_actual_mejorado[$len_valor - 1]; //Para LOG
+                        $valor_actual_mejorado = substr($valor_actual_mejorado, 0, $len_valor - 2);
+                        $len_valor = strlen($valor_actual_mejorado);
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a su '-' era más largo, por lo que los tamaños no encajaban.\n");
+                        fclose($XXXLOG);
                     }
 
                     if ($len_valor !== 12){
-                        echo $valor_actual."\n"; //Para ERR
-                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'w');
+                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'a');
                         for ($j = 0; $j < $len_fila; $j++){
                             fwrite($XXXERR, $fila[$j].";");
                         }
+                        fwrite($XXXERR, "\n");
                         fclose($XXXERR);
                     }
                 }
@@ -98,15 +102,17 @@ function datos_fuera_formato ($nombre_archivo){
                     $len_valor = strlen($valor_actual);
                     
                     if ($valor_actual !== $valor_sin_tildes){
-                        //echo $valor_actual."\n";
-                        $valor_actual = $valor_sin_tildes; //Para LOG
-                        //echo $valor_actual."\n";
+                        $valor_actual_mejorado = $valor_sin_tildes;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que habían tildes en el correo.\n");
+                        fclose($XXXLOG);
                     }
 
                     if (strpos($valor_actual, '@@')){
-                        //echo $valor_actual."\n";
-                        $valor_actual = str_replace('@@', '@', $valor_actual); //Para LOG
-                        //echo $valor_actual."\n";
+                        $valor_actual_mejorado = str_replace('@@', '@', $valor_actual);
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que tenía un @ extra.\n");
+                        fclose($XXXLOG);
                     }
                 }
                 
@@ -115,6 +121,7 @@ function datos_fuera_formato ($nombre_archivo){
                     $valor_actual = trim($valor_actual);
                     $len_valor = strlen($valor_actual);
                     if ($len_valor !== 0 and $len_valor !== 8){
+                        //Para ERR
                         echo "Error\n";
                         echo $valor_actual."\n";
                     }
@@ -125,14 +132,16 @@ function datos_fuera_formato ($nombre_archivo){
                     $valor_actual = trim($valor_actual);
                     $len_valor = strlen($valor_actual);
                     if ($len_valor !== 9){
-                        //echo $valor_actual."\n";
-                        $valor_actual = "100000000"; //Para LOG
-                        //echo $valor_actual."\n";
+                        $valor_actual_mejorado = "100000000";
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que, por su número de dígitos, no era un número telefónico válido.\n");
+                        fclose($XXXLOG);
                     }
                     if ($valor_actual[0] == "0"){
-                        //echo $valor_actual."\n";
-                        $valor_actual = "100000000"; //Para LOG
-                        //echo $valor_actual."\n";
+                        $valor_actual_mejorado = "100000000";
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que, como su primer dígito es 0, no era un número telefónico válido.\n");
+                        fclose($XXXLOG);
                     }
                 }
                 
