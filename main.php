@@ -14,12 +14,7 @@ $archivos_originales = [
     'Arancel DCColita de rana.csv'
 ];
 
-//foreach ($archivos_originales as $archivo_original){
-    //
-//}
-
-datos_fuera_formato($archivos_originales[0]);
-
-//datos_no_estandar($archivos_originales[0]);
-
+foreach ($archivos_originales as $archivo_original){
+    datos_fuera_formato($archivo_original);
+}
 ?>

@@ -90,3 +90,85 @@ CREATE TABLE Orden (
     IDArancel INT REFERENCES ArancelDCColita(ID),
     Consulta VARCHAR(100)
 );
+
+
+--Insertamos los datos.
+\COPY InstitucionSalud(codigo, nombre, tipo, rut, enlace)
+FROM 'C:\ruta\Instituciones previsionales de saludOK.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\Colmena de avispas S.A..csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\Cruz de Malta S.A..csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\Cruz pal cielo Ltda..csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\Fundación e imperio.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\Medibanc S.A..csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\Menos vida S.A..csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\salud.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Plan(IDInstitucion, Bonificacion, Grupo)
+FROM 'C:\ruta\Vida uno S.A..csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Persona(RUN, Nombre, Apellido, Direccion, Correo, Telefono, rol, profesion, especialidad, firma, tipo, titular, IDInstitucion)
+FROM 'C:\ruta\PersonaOK.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY ArancelFonasa(CodF, CodA, Atencion, Valor, Grupo, Tipo)
+FROM 'C:\ruta\Arancel fonasaOK.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY ArancelDCColita(Codigo, CodFonasa, Atencion, Valor)
+FROM 'C:\ruta\Arancel DCColita de ranaOK.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Farmacia(Cod, Nombre, Descripcion, Tipo, CodONU, ClasONU, Clasificacion, Estado, Esencial, Precio)
+FROM 'C:\ruta\FarmaciaOK.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Atencion(RunPaciente, RunMedico, Diagnostico, Efectuada)
+FROM 'C:\ruta\AtencionOK.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Medicamento(fecha, IDAtencion, Nombre, Posologia, Psicotropico)
+FROM 'C:\ruta\MedicamentoOK.csv'
+DELIMITER ';'
+CSV HEADER;
+
+\COPY Orden(IDAtencion, IDArancel, Consulta)
+FROM 'C:\ruta\OrdenOK.csv'
+DELIMITER ';'
+CSV HEADER;

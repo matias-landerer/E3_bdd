@@ -127,6 +127,14 @@ function datos_fuera_formato ($nombre_archivo){
                         fclose($XXXLOG);
                         $fila_corregida[$i] = $valor_actual_mejorado;
                     }
+
+                    if (strpos($valor_actual, '..')){
+                        $valor_actual_mejorado = str_replace('..', '.', $valor_actual);
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que tenía un . extra.\n");
+                        fclose($XXXLOG);
+                        $fila_corregida[$i] = $valor_actual_mejorado;
+                    }
                 }
                 
                 elseif ($col_actual == "titular") {
