@@ -11,3 +11,28 @@ Arancel fonasa.csv
 Arancel DCColita de rana.csv
 
 PersonaERR.csv
+OrdenERR.csv
+MedicamentoERR.csv
+Instituciones previsionales de saludERR.csv
+FarmaciaERR.csv
+AtencionERR.csv
+Arancel fonasaERR.csv
+Arancel DCColita de ranaERR.csv
+
+PersonaLOG.txt
+OrdenLOG.txt
+MedicamentoLOG.txt
+Instituciones previsionales de saludLOG.txt
+FarmaciaLOG.txt
+AtencionLOG.txt
+Arancel fonasaLOG.txt
+Arancel DCColita de ranaLOG.txt
+
+PersonaOK.csv
+OrdenOK.csv
+MedicamentoOK.csv
+Instituciones previsionales de saludOK.csv
+FarmaciaOK.csv
+AtencionOK.csv
+Arancel fonasaOK.csv
+Arancel DCColita de ranaOK.csv

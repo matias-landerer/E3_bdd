@@ -76,6 +76,7 @@ CREATE TABLE ArancelDCColita (
 
 CREATE TABLE Atencion (
     ID SERIAL PRIMARY KEY,
+    fecha DATE,
     RunPaciente CHAR(10) REFERENCES Persona(RUN),
     RunMedico CHAR(10) REFERENCES Persona(RUN),
     Diagnostico VARCHAR(100),
@@ -84,7 +85,6 @@ CREATE TABLE Atencion (
 
 CREATE TABLE Medicamento (
     ID SERIAL PRIMARY KEY,
-    fecha DATE,
     IDAtencion INT REFERENCES Atencion(ID),
     Nombre VARCHAR(100) REFERENCES Farmacia(Nombre),
     Posologia VARCHAR(100),
@@ -126,30 +126,7 @@ UPDATE Plan SET IDInstitucion = 1 WHERE IDInstitucion IS NULL;
 \COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Vida uno S.A..csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 5 WHERE IDInstitucion IS NULL;
 
-CREATE TEMP TABLE tmp_persona (
-    ID INTEGER,
-    RUN TEXT,
-    Nombre TEXT,
-    Apellido TEXT,
-    Direccion TEXT,
-    Correo TEXT,
-    Telefono TEXT,
-    tipo TEXT,
-    titular TEXT,
-    rol TEXT,
-    profesion TEXT,
-    especialidad TEXT,
-    firma TEXT,
-    Institucion TEXT
-);
-
-\COPY tmp_persona FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\PersonaOK.csv' DELIMITER ';' CSV HEADER;
-INSERT INTO Persona (ID, RUN, Nombre, Apellido, Direccion, Correo, Telefono, tipo, titular, rol, profesion, especialidad, firma, Institucion)
-SELECT ID, RUN, Nombre, Apellido, Direccion, Correo, Telefono, tipo, titular, rol, profesion, especialidad, firma, Institucion
-FROM tmp_persona
-ON CONFLICT DO NOTHING;
-DROP TABLE tmp_persona;
---\COPY (SELECT * FROM tmp_persona WHERE RUN NOT IN (SELECT RUN FROM Persona)) TO 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\cargarERR.csv' DELIMITER ';' CSV HEADER;
+\COPY Persona(ID, RUN, Nombre, Apellido, Direccion, Correo, Telefono, tipo, titular, rol, profesion, especialidad, firma, Institucion) FROM '/home/mlanderer.e3/E3/' DELIMITER ';' CSV HEADER;
 
 \COPY ArancelFonasa(CodF, CodA, Atencion, Valor, Grupo, Tipo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Arancel fonasaOK.csv' DELIMITER ';' CSV HEADER;
 

@@ -3,6 +3,7 @@ function datos_fuera_formato ($nombre_archivo){
     $len_nombre_archivo = strlen($nombre_archivo);
     $archivo = fopen($nombre_archivo, 'r');
     $columnas = fgetcsv($archivo, 0, ';', '"', '\\');
+    $len_col = count($columnas);
 
     $XXXOK = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."OK.csv", 'w');
 
@@ -14,6 +15,16 @@ function datos_fuera_formato ($nombre_archivo){
         $col_actual = preg_replace('/^\xEF\xBB\xBF/', '', $col_actual);
         
         if ($col_actual == "RUN"){
+            $indice_actual = array_search($col, $columnas);
+            $indices_columnas[] = $indice_actual;
+        }
+        
+        elseif ($col_actual == "runpaciente") {
+            $indice_actual = array_search($col, $columnas);
+            $indices_columnas[] = $indice_actual;
+        }
+
+        elseif ($col_actual == "runmedico") {
             $indice_actual = array_search($col, $columnas);
             $indices_columnas[] = $indice_actual;
         }
@@ -52,11 +63,27 @@ function datos_fuera_formato ($nombre_archivo){
             $indice_actual = array_search($col, $columnas);
             $indices_columnas[] = $indice_actual;
         }
+
+        elseif ($col_actual == "profesión") {
+            $indice_actual = array_search($col, $columnas);
+            $indices_columnas[] = $indice_actual;
+        }
+
+        elseif ($col_actual == "Valor fonasa") {
+            $indice_actual = array_search($col, $columnas);
+            $indices_columnas[] = $indice_actual;
+        }
     }
 
     while (($fila = fgetcsv($archivo, 0, ';', '"', '\\')) !== false){
         $enERR = false;
         $fila_corregida = $fila;
+        if ($columnas[$len_col - 1] == ""){
+            $fila_corregida = array_slice($fila, 0, -1);
+            $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+            fwrite($XXXLOG, "Se eliminó el último elemento de cada tupla, ya que eran NULL, al igual que la columna.\n");
+            fclose($XXXLOG);
+        }
         $len_fila = count($fila);
 
         for ($i = 0; $i < $len_fila; $i++){
@@ -66,6 +93,42 @@ function datos_fuera_formato ($nombre_archivo){
                 $col_actual = preg_replace('/^\xEF\xBB\xBF/', '', $col_actual);
                 
                 if ($col_actual == "RUN"){
+                    $valor_actual = $fila[$i];
+                    $valor_actual = trim($valor_actual);
+                    $len_valor = strlen($valor_actual);
+                    if ($len_valor !== 8 or $valor_actual[0] == "0"){
+                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'a');
+                        for ($j = 0; $j < $len_fila; $j++){
+                            fwrite($XXXERR, $fila[$j].";");
+                        }
+                        fwrite($XXXERR, "\n");
+                        fclose($XXXERR);
+                        $enERR = true;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que ".$valor_actual." es un error irreparable.\n");
+                        fclose($XXXLOG);
+                    }
+                }
+
+                elseif ($col_actual == "runpaciente"){
+                    $valor_actual = $fila[$i];
+                    $valor_actual = trim($valor_actual);
+                    $len_valor = strlen($valor_actual);
+                    if ($len_valor !== 8 or $valor_actual[0] == "0"){
+                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'a');
+                        for ($j = 0; $j < $len_fila; $j++){
+                            fwrite($XXXERR, $fila[$j].";");
+                        }
+                        fwrite($XXXERR, "\n");
+                        fclose($XXXERR);
+                        $enERR = true;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que ".$valor_actual." es un error irreparable.\n");
+                        fclose($XXXLOG);
+                    }
+                }
+
+                elseif ($col_actual == "runmedico"){
                     $valor_actual = $fila[$i];
                     $valor_actual = trim($valor_actual);
                     $len_valor = strlen($valor_actual);
@@ -212,8 +275,43 @@ function datos_fuera_formato ($nombre_archivo){
                         fclose($XXXERR);
                         $enERR = true;
                         $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
-                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que se encontró una fecha es un error irreparable.\n");
+                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que la fecha".$valor_actual." no tiene el tamaño correcto, por lo que es un error irreparable.\n");
                         fclose($XXXLOG);
+                    }
+                }
+
+                elseif ($col_actual == "profesión") {
+                    $profesiones = ['TENS','enfermero/a','kinesiólogo/a','médico(a)'];
+                    $valor_actual = $fila[$i];
+                    $valor_actual = trim($valor_actual);
+                    $len_valor = strlen($valor_actual);
+                    foreach ($profesiones as $prof){
+                        if (str_contains($valor_actual, $prof) and $valor_actual != $prof){
+                            $valor_actual_mejorado = $prof;
+                            $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                            fwrite($XXXLOG, "Se reemplazo ".$valor_actual." por ".$valor_actual_mejorado.", ya que la profesión estaba mal escrita.\n");
+                            fclose($XXXLOG);
+                            $fila_corregida[$i] = $valor_actual_mejorado;
+                        }
+                    }
+                }
+
+                elseif ($col_actual == "Valor fonasa") {
+                    $valor_actual = $fila[$i];
+                    $valor_actual = trim($valor_actual);
+                    $len_valor = strlen($valor_actual);
+                    $valor_actual_mejorado = "";
+                    for ($j = 0; $j < $len_valor; $j++){
+                        if ($valor_actual[$j] != "."){
+                            $valor_actual_mejorado .= $valor_actual[$j];
+                        }
+                    }
+                    
+                    if ($valor_actual != $valor_actual_mejorado){
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se reemplazo ".$valor_actual." por ".$valor_actual_mejorado.", ya que el precio estaba en el formato incorrecto.\n");
+                        fclose($XXXLOG);
+                        $fila_corregida[$i] = $valor_actual_mejorado;
                     }
                 }
             }
