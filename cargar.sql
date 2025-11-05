@@ -1,8 +1,5 @@
- --Ignorar, lo tengo para usarlo al probar la entrega.
-/*
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
-*/
 
 DROP TABLE IF EXISTS InstitucionSalud, Persona, Plan, Farmacia, ArancelFonasa, ArancelDCColita, Atencion, Medicamento, Orden CASCADE;
 --Creación de entidades.
@@ -98,44 +95,43 @@ CREATE TABLE Orden (
     Consulta VARCHAR(100)
 );
 
---/home/mlanderer.e3/E3/planes/
 --Insertamos los datos (perdón por tener las lineas tan largas, pero no funcionaba al usar saltos de línea).
-\COPY InstitucionSalud(codigo, nombre, tipo, rut, enlace) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Instituciones previsionales de saludOK.csv' DELIMITER ';' CSV HEADER;
+\COPY InstitucionSalud(codigo, nombre, tipo, rut, enlace) FROM '/home/mlanderer.e3/E3/Instituciones previsionales de saludOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\\planes\Colmena de avispas S.A..csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3/planes/Colmena de avispas S.A..csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 2 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Cruz de Malta S.A..csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3/planes/Cruz de Malta S.A..csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 4 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Cruz pal cielo Ltda..csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3/planes/Cruz pal cielo Ltda..csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 7 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Fundación e imperio.csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3/planes/Fundación e imperio.csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 3 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Medibanc S.A..csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3/planes/Medibanc S.A..csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 8 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Menos vida S.A..csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3//planes/Menos vida S.A..csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 6 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\salud.csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3/planes/salud.csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 1 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Vida uno S.A..csv' DELIMITER ';' CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM '/home/mlanderer.e3/E3/planes/Vida uno S.A..csv' DELIMITER ';' CSV HEADER;
 UPDATE Plan SET IDInstitucion = 5 WHERE IDInstitucion IS NULL;
 
 \COPY Persona(ID, RUN, Nombre, Apellido, Direccion, Correo, Telefono, tipo, titular, rol, profesion, especialidad, firma, Institucion) FROM '/home/mlanderer.e3/E3/' DELIMITER ';' CSV HEADER;
 
-\COPY ArancelFonasa(CodF, CodA, Atencion, Valor, Grupo, Tipo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Arancel fonasaOK.csv' DELIMITER ';' CSV HEADER;
+\COPY ArancelFonasa(CodF, CodA, Atencion, Valor, Grupo, Tipo) FROM '/home/mlanderer.e3/E3/Arancel fonasaOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY ArancelDCColita(Codigo, CodFonasa, Atencion, Valor) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Arancel DCColita de ranaOK.csv' DELIMITER ';' CSV HEADER;
+\COPY ArancelDCColita(Codigo, CodFonasa, Atencion, Valor) FROM '/home/mlanderer.e3/E3/Arancel DCColita de ranaOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Farmacia(Cod, Nombre, Descripcion, Tipo, CodONU, ClasONU, Clasificacion, Estado, Esencial, Precio) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\FarmaciaOK.csv' DELIMITER ';' CSV HEADER;
+\COPY Farmacia(Cod, Nombre, Descripcion, Tipo, CodONU, ClasONU, Clasificacion, Estado, Esencial, Precio) FROM '/home/mlanderer.e3/E3/FarmaciaOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Atencion(RunPaciente, RunMedico, Diagnostico, Efectuada) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\AtencionOK.csv' DELIMITER ';' CSV HEADER;
+\COPY Atencion(RunPaciente, RunMedico, Diagnostico, Efectuada) FROM '/home/mlanderer.e3/E3/AtencionOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Medicamento(fecha, IDAtencion, Nombre, Posologia, Psicotropico) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\MedicamentoOK.csv' DELIMITER ';' CSV HEADER;
+\COPY Medicamento(fecha, IDAtencion, Nombre, Posologia, Psicotropico) FROM '/home/mlanderer.e3/E3/MedicamentoOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Orden(IDAtencion, IDArancel, Consulta) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\OrdenOK.csv' DELIMITER ';' CSV HEADER;
+\COPY Orden(IDAtencion, IDArancel, Consulta) FROM '/home/mlanderer.e3/E3/OrdenOK.csv' DELIMITER ';' CSV HEADER;

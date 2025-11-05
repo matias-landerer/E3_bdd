@@ -40,11 +40,11 @@ Indicar los registros con atributo PK duplicado
 
 ### 3. Instrucciones de ejecución de Entrega
 <!-- Indica las instrucciones para ejecutar el archivo PHP y SQL -->
-Solo hace falta ejecutar main.php y cargar.sql. main.php requiere de otro archivo llamado datos_fuera_formato.php, que es el que hace el trabajo pesado. No hace falta ejecutar este segundo archivo, pues se ejecuta al correr main.php, pero es importante que ambos estén en el mismo directorio.
+Solo hace falta ejecutar main.php y cargar.sql. main.php requiere de otro archivo llamado datos_fuera_formato.php, que es el que hace el trabajo pesado. No hace falta ejecutar este segundo archivo, pues se ejecuta al correr main.php, pero es importante que ambos estén en el mismo directorio. Para ejecutar main.php solo hay que ingresar php main.php desde el directorio E3.
 
 Lo mismo con los archivos originales, deben estar en el mismo directorio que main.php para que este funcione bien, y los archivos XXXOK.csv junto con las carpetas planes y firmas deben estar en el mismo directorio que cargar.sql para que este pueda cargarlos correctamente.
 
-Además de los archivos XXXOK.csv no hace falta nada más para correr cargar.sql, pues todo está en aqueñ archivo. Se necesitaría ejecutar en psql y que haya una base de datos ya creada, pero vacía, sin tablas, pues cargar.sql se encarga de crear las tablas y cargar los datos.
+Además de los archivos XXXOK.csv no hace falta nada más para correr cargar.sql, pues todo está en aquel archivo. Se necesitaría ejecutar en psql y que haya una base de datos ya creada, pero vacía, sin tablas, pues cargar.sql se encarga de crear las tablas y cargar los datos. Para ejecutar cargar.sql hay que ingresar psql -U {nombre_usuario} -d {nombre_dt} -f cargar.sql desde el directorio E3.
 
 PD: main.php tarda un par de segundos en ejecutarse.
 
@@ -56,3 +56,5 @@ PD: main.php tarda un par de segundos en ejecutarse.
 - Notarán que hay filtros en main.php que no se ven reflejados en la tabla de este informe, esto se debe a que en la tabla solo están los errores captados. Hubieron algunos escenarios que se abordaron en main.php pero no detectaron ningún error, pero se mantuvieron para tener más robustez (Ej: se revisa titular de persona, pero no se detecta nada, asi que no está en la tabla).
 
 - Como en el enunciado dice 'Todos los archivos .csv originales y procesados, los .txt y .sql en el directorio E3', asumí que había que subir todos los archivos, incluyendo los generados por main.php.
+
+- main.php funciona bien, pero cargar.sql solo crea las tablas para la base de datos, igual se escribió código para cargar los datos pero no funciona, excepto para la tabla de instituciones previsionales de salud, esa carga bien los datos a la tabla, pero los demás no se cargan. Por lo mismo la tabla de errores en SQL está vacía, solo tiene lo que venía en la plantilla.
