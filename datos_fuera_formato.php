@@ -43,6 +43,11 @@ function datos_fuera_formato ($nombre_archivo){
             $indices_columnas[] = $indice_actual;
         }
         
+        elseif ($col_actual == "Enlace") {
+            $indice_actual = array_search($col, $columnas);
+            $indices_columnas[] = $indice_actual;
+        }
+
         elseif ($col_actual == "fecha") {
             $indice_actual = array_search($col, $columnas);
             $indices_columnas[] = $indice_actual;
@@ -72,6 +77,9 @@ function datos_fuera_formato ($nombre_archivo){
                         fwrite($XXXERR, "\n");
                         fclose($XXXERR);
                         $enERR = true;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que ".$valor_actual." es un error irreparable.\n");
+                        fclose($XXXLOG);
                     }
                 }
                 
@@ -85,7 +93,7 @@ function datos_fuera_formato ($nombre_archivo){
                         $valor_actual_mejorado[$len_valor - 3] = $valor_actual_mejorado[$len_valor - 1];
                         $valor_actual_mejorado = substr($valor_actual_mejorado, 0, $len_valor - 2);
                         $len_valor = strlen($valor_actual_mejorado);
-                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
                         fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a su '-' era más largo, por lo que los tamaños no encajaban.\n");
                         fclose($XXXLOG);
                         $fila_corregida[$i] = $valor_actual_mejorado;
@@ -99,6 +107,9 @@ function datos_fuera_formato ($nombre_archivo){
                         fwrite($XXXERR, "\n");
                         fclose($XXXERR);
                         $enERR = true;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que ".$valor_actual." es un error irreparable.\n");
+                        fclose($XXXLOG);
                     }
                 }
                 
@@ -114,7 +125,7 @@ function datos_fuera_formato ($nombre_archivo){
                     
                     if ($valor_actual !== $valor_sin_tildes){
                         $valor_actual_mejorado = $valor_sin_tildes;
-                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
                         fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que habían tildes en el correo.\n");
                         fclose($XXXLOG);
                         $fila_corregida[$i] = $valor_actual_mejorado;
@@ -122,7 +133,7 @@ function datos_fuera_formato ($nombre_archivo){
 
                     if (strpos($valor_actual, '@@')){
                         $valor_actual_mejorado = str_replace('@@', '@', $valor_actual);
-                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
                         fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que tenía un @ extra.\n");
                         fclose($XXXLOG);
                         $fila_corregida[$i] = $valor_actual_mejorado;
@@ -130,7 +141,7 @@ function datos_fuera_formato ($nombre_archivo){
 
                     if (strpos($valor_actual, '..')){
                         $valor_actual_mejorado = str_replace('..', '.', $valor_actual);
-                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
                         fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que tenía un . extra.\n");
                         fclose($XXXLOG);
                         $fila_corregida[$i] = $valor_actual_mejorado;
@@ -142,9 +153,16 @@ function datos_fuera_formato ($nombre_archivo){
                     $valor_actual = trim($valor_actual);
                     $len_valor = strlen($valor_actual);
                     if ($len_valor !== 0 and $len_valor !== 8){
-                        //Para ERR
-                        echo "Error\n";
-                        echo $valor_actual."\n";
+                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'a');
+                        for ($j = 0; $j < $len_fila; $j++){
+                            fwrite($XXXERR, $fila[$j].";");
+                        }
+                        fwrite($XXXERR, "\n");
+                        fclose($XXXERR);
+                        $enERR = true;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que ".$valor_actual." es un error irreparable.\n");
+                        fclose($XXXLOG);
                     }
                 }
                 
@@ -154,26 +172,48 @@ function datos_fuera_formato ($nombre_archivo){
                     $len_valor = strlen($valor_actual);
                     if ($len_valor !== 9){
                         $valor_actual_mejorado = "100000000";
-                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
                         fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que, por su número de dígitos, no era un número telefónico válido.\n");
                         fclose($XXXLOG);
                         $fila_corregida[$i] = $valor_actual_mejorado;
                     }
                     if ($valor_actual[0] == "0"){
                         $valor_actual_mejorado = "100000000";
-                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.csv", 'a');
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
                         fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que, como su primer dígito es 0, no era un número telefónico válido.\n");
                         fclose($XXXLOG);
                         $fila_corregida[$i] = $valor_actual_mejorado;
                     }
                 }
                 
+                elseif ($col_actual == "Enlace") {
+                    $valor_actual = $fila[$i];
+                    $valor_actual = trim($valor_actual);
+                    $len_valor = strlen($valor_actual);
+                    if (substr($valor_actual, 0, 4) !== 'https' and $valor_actual != ""){
+                        $valor_actual_mejorado = "https://".$valor_actual;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se cambió ".$valor_actual." por ".$valor_actual_mejorado." debido a que el enlace no tenía https.\n");
+                        fclose($XXXLOG);
+                        $fila_corregida[$i] = $valor_actual_mejorado;
+                    }
+                }
+
                 elseif ($col_actual == "fecha") {
                     $valor_actual = $fila[$i];
                     $valor_actual = trim($valor_actual);
                     $len_valor = strlen($valor_actual);
-                    if ($len_valor !== 8){
-                        echo $valor_actual."\n";
+                    if ($len_valor != 8){
+                        $XXXERR = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."ERR.csv", 'a');
+                        for ($j = 0; $j < $len_fila; $j++){
+                            fwrite($XXXERR, $fila[$j].";");
+                        }
+                        fwrite($XXXERR, "\n");
+                        fclose($XXXERR);
+                        $enERR = true;
+                        $XXXLOG = fopen(substr($nombre_archivo, 0, $len_nombre_archivo - 4)."LOG.txt", 'a');
+                        fwrite($XXXLOG, "Se eliminó toda la tupla ya que se encontró una fecha es un error irreparable.\n");
+                        fclose($XXXLOG);
                     }
                 }
             }

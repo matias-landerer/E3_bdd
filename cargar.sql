@@ -1,4 +1,20 @@
+ --Ignorar, lo tengo para usarlo al probar la entrega.
+/*
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+*/
+
+DROP TABLE IF EXISTS InstitucionSalud, Persona, Plan, Farmacia, ArancelFonasa, ArancelDCColita, Atencion, Medicamento, Orden CASCADE;
 --Creación de entidades.
+CREATE TABLE InstitucionSalud (
+    ID SERIAL PRIMARY KEY,
+    codigo INT NOT NULL UNIQUE,
+    nombre VARCHAR(30) UNIQUE NOT NULL,
+    tipo VARCHAR(10) CHECK (Tipo IN ('abierta','cerrada')),
+    rut CHAR(12) NOT NULL UNIQUE,
+    Enlace TEXT
+);
+
 CREATE TABLE Persona (
     ID SERIAL PRIMARY KEY,
     RUN CHAR(10) UNIQUE NOT NULL,
@@ -7,26 +23,17 @@ CREATE TABLE Persona (
     Direccion VARCHAR(100),
     Correo VARCHAR(100) CHECK (Correo ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
     Telefono CHAR(9) CHECK (Telefono ~ '^[1-9][0-9]{8}$'),
+    tipo VARCHAR(15) CHECK (tipo IN ('titular','beneficiario')),
+    titular CHAR(10) REFERENCES Persona(RUN),
     rol VARCHAR(20) CHECK (rol IN ('Staff médico', 'administrativo', 'paciente')),
     profesion VARCHAR(30) CHECK (profesion IN ('TENS','enfermero/a','kinesiólogo/a','médico(a)')),
     especialidad VARCHAR(30),
     firma TEXT,
-    tipo VARCHAR(15) CHECK (tipo IN ('titular','beneficiario')),
-    titular CHAR(10) REFERENCES Persona(RUN),
-    IDInstitucion INT REFERENCES InstitucionSalud(ID),
+    Institucion VARCHAR(30) REFERENCES InstitucionSalud(nombre),
     CONSTRAINT chk_especialidad_medico CHECK (
         (profesion = 'médico(a)' AND especialidad IS NOT NULL)
         OR (profesion != 'médico(a)' AND especialidad IS NULL)
     )
-);
-
-CREATE TABLE InstitucionSalud (
-    ID SERIAL PRIMARY KEY,
-    codigo INT NOT NULL UNIQUE,
-    nombre VARCHAR(30) NOT NULL,
-    tipo VARCHAR(10) CHECK (Tipo IN ('abierta','cerrada')),
-    rut CHAR(12) NOT NULL UNIQUE,
-    Enlace TEXT
 );
 
 CREATE TABLE Plan (
@@ -38,7 +45,7 @@ CREATE TABLE Plan (
 CREATE TABLE Farmacia (
     ID SERIAL PRIMARY KEY,
     Cod INT UNIQUE NOT NULL,
-    Nombre VARCHAR(100) NOT NULL,
+    Nombre VARCHAR(100) UNIQUE NOT NULL,
     Descripcion TEXT NOT NULL,
     Tipo VARCHAR(30) CHECK (Tipo IN ('Alimentos','Equipamiento','Fármacos','Insumos','Psicotrópicos','Refrigerados','Sueros')),
     CodONU INT,
@@ -91,84 +98,67 @@ CREATE TABLE Orden (
     Consulta VARCHAR(100)
 );
 
+--/home/mlanderer.e3/E3/planes/
+--Insertamos los datos (perdón por tener las lineas tan largas, pero no funcionaba al usar saltos de línea).
+\COPY InstitucionSalud(codigo, nombre, tipo, rut, enlace) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Instituciones previsionales de saludOK.csv' DELIMITER ';' CSV HEADER;
 
---Insertamos los datos.
-\COPY InstitucionSalud(codigo, nombre, tipo, rut, enlace)
-FROM 'C:\ruta\Instituciones previsionales de saludOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\\planes\Colmena de avispas S.A..csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 2 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\Colmena de avispas S.A..csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Cruz de Malta S.A..csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 4 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\Cruz de Malta S.A..csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Cruz pal cielo Ltda..csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 7 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\Cruz pal cielo Ltda..csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Fundación e imperio.csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 3 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\Fundación e imperio.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Medibanc S.A..csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 8 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\Medibanc S.A..csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Menos vida S.A..csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 6 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\Menos vida S.A..csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\salud.csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 1 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\salud.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Plan(Bonificacion, Grupo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Vida uno S.A..csv' DELIMITER ';' CSV HEADER;
+UPDATE Plan SET IDInstitucion = 5 WHERE IDInstitucion IS NULL;
 
-\COPY Plan(IDInstitucion, Bonificacion, Grupo)
-FROM 'C:\ruta\Vida uno S.A..csv'
-DELIMITER ';'
-CSV HEADER;
+CREATE TEMP TABLE tmp_persona (
+    ID INTEGER,
+    RUN TEXT,
+    Nombre TEXT,
+    Apellido TEXT,
+    Direccion TEXT,
+    Correo TEXT,
+    Telefono TEXT,
+    tipo TEXT,
+    titular TEXT,
+    rol TEXT,
+    profesion TEXT,
+    especialidad TEXT,
+    firma TEXT,
+    Institucion TEXT
+);
 
-\COPY Persona(RUN, Nombre, Apellido, Direccion, Correo, Telefono, rol, profesion, especialidad, firma, tipo, titular, IDInstitucion)
-FROM 'C:\ruta\PersonaOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY tmp_persona FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\PersonaOK.csv' DELIMITER ';' CSV HEADER;
+INSERT INTO Persona (ID, RUN, Nombre, Apellido, Direccion, Correo, Telefono, tipo, titular, rol, profesion, especialidad, firma, Institucion)
+SELECT ID, RUN, Nombre, Apellido, Direccion, Correo, Telefono, tipo, titular, rol, profesion, especialidad, firma, Institucion
+FROM tmp_persona
+ON CONFLICT DO NOTHING;
+DROP TABLE tmp_persona;
+--\COPY (SELECT * FROM tmp_persona WHERE RUN NOT IN (SELECT RUN FROM Persona)) TO 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\cargarERR.csv' DELIMITER ';' CSV HEADER;
 
-\COPY ArancelFonasa(CodF, CodA, Atencion, Valor, Grupo, Tipo)
-FROM 'C:\ruta\Arancel fonasaOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY ArancelFonasa(CodF, CodA, Atencion, Valor, Grupo, Tipo) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Arancel fonasaOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY ArancelDCColita(Codigo, CodFonasa, Atencion, Valor)
-FROM 'C:\ruta\Arancel DCColita de ranaOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY ArancelDCColita(Codigo, CodFonasa, Atencion, Valor) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\Arancel DCColita de ranaOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Farmacia(Cod, Nombre, Descripcion, Tipo, CodONU, ClasONU, Clasificacion, Estado, Esencial, Precio)
-FROM 'C:\ruta\FarmaciaOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Farmacia(Cod, Nombre, Descripcion, Tipo, CodONU, ClasONU, Clasificacion, Estado, Esencial, Precio) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\FarmaciaOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Atencion(RunPaciente, RunMedico, Diagnostico, Efectuada)
-FROM 'C:\ruta\AtencionOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Atencion(RunPaciente, RunMedico, Diagnostico, Efectuada) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\AtencionOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Medicamento(fecha, IDAtencion, Nombre, Posologia, Psicotropico)
-FROM 'C:\ruta\MedicamentoOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Medicamento(fecha, IDAtencion, Nombre, Posologia, Psicotropico) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\MedicamentoOK.csv' DELIMITER ';' CSV HEADER;
 
-\COPY Orden(IDAtencion, IDArancel, Consulta)
-FROM 'C:\ruta\OrdenOK.csv'
-DELIMITER ';'
-CSV HEADER;
+\COPY Orden(IDAtencion, IDArancel, Consulta) FROM 'C:\Users\lanco_qehqoqy\OneDrive\Escritorio\E3_bdd\OrdenOK.csv' DELIMITER ';' CSV HEADER;
